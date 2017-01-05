@@ -21,8 +21,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import org.jclouds.elb.domain.HealthCheck;
+import org.jclouds.elb.domain.Listener;
+import org.jclouds.elb.domain.Protocol;
 import org.jclouds.elb.internal.BaseELBApiLiveTest;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
 
 @Test(groups = "live", testName = "HealthCheckApiLiveTest")
 public class HealthCheckApiLiveTest extends BaseELBApiLiveTest {
@@ -31,10 +37,31 @@ public class HealthCheckApiLiveTest extends BaseELBApiLiveTest {
       return api.getHealthCheckApi();
    }
 
+   @BeforeMethod
+   private void setUp() {
+      super.setup();
+      Listener listener = Listener.builder()
+              .protocol(Protocol.HTTP)
+              .port(80)
+              .instanceProtocol(Protocol.HTTP)
+              .instancePort(80)
+              .build();
+      api.getLoadBalancerApi().createListeningInAvailabilityZones("test", listener, ImmutableList.of("us-east-1b"));
+   }
+
+   @AfterClass
+   @Override
+   protected void tearDown() {
+      super.tearDown();
+      if (api.getLoadBalancerApi().get("test") != null) {
+         api.getLoadBalancerApi().delete("test");
+      }
+   }
+   
    @Test
    protected void testConfigureHealthCheck() {
 
-      Set<HealthCheck> healthChecks = api().configureHealthCheck("elbName", HealthCheck.builder()
+      Set<HealthCheck> healthChecks = api().configureHealthCheck("test", HealthCheck.builder()
               .healthyThreshold(2)
               .unhealthyThreshold(2)
               .interval(30)
@@ -44,6 +71,7 @@ public class HealthCheckApiLiveTest extends BaseELBApiLiveTest {
       for (HealthCheck healthCheck : healthChecks) {
          checkHealthCheck(healthCheck);
       }
+      
    }
 
    private void checkHealthCheck(HealthCheck healthCheck) {
