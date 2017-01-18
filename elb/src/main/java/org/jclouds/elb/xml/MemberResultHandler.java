@@ -22,7 +22,7 @@ import org.jclouds.http.functions.ParseSax;
 
 import com.google.common.collect.Sets;
 
-public class AvailabilityZonesResultHandler extends ParseSax.HandlerWithResult<Set<String>> {
+public class MemberResultHandler extends ParseSax.HandlerWithResult<Set<String>> {
 
    private Set<String> zones = Sets.newLinkedHashSet();
    private StringBuilder currentText = new StringBuilder();

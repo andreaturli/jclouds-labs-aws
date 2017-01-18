@@ -21,7 +21,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.elb.xml.AvailabilityZonesResultHandler;
+import org.jclouds.elb.xml.MemberResultHandler;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
@@ -36,7 +36,7 @@ public class AvailabilityZonesResultHandlerTest extends BaseHandlerTest {
 
       Set<String> expected = expected();
 
-      AvailabilityZonesResultHandler handler = injector.getInstance(AvailabilityZonesResultHandler.class);
+      MemberResultHandler handler = injector.getInstance(MemberResultHandler.class);
       Set<String> result = factory.create(handler).parse(is);
 
       assertEquals(result.toString(), expected.toString());
