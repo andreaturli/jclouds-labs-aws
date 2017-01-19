@@ -16,12 +16,10 @@
  */
 package org.jclouds.elb.features;
 
-import static org.assertj.core.util.Preconditions.checkNotNull;
-
 import java.util.Set;
 
-import org.jclouds.elb.domain.HealthCheck;
 import org.jclouds.elb.domain.Listener;
+import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.domain.Protocol;
 import org.jclouds.elb.internal.BaseELBApiLiveTest;
 import org.testng.annotations.AfterClass;
@@ -31,10 +29,12 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 
 @Test(groups = "live", testName = "HealthCheckApiLiveTest")
-public class HealthCheckApiLiveTest extends BaseELBApiLiveTest {
+public class SubnetApiLiveTest extends BaseELBApiLiveTest {
 
-   protected HealthCheckApi api() {
-      return api.getHealthCheckApi();
+   LoadBalancer loadBalancer;
+
+   protected SubnetApi api() {
+      return api.getSubnetApi();
    }
 
    @BeforeMethod
@@ -47,6 +47,9 @@ public class HealthCheckApiLiveTest extends BaseELBApiLiveTest {
               .instancePort(80)
               .build();
       api.getLoadBalancerApi().createListeningInAvailabilityZones("test", listener, ImmutableList.of("us-east-1b"));
+      loadBalancer = api.getLoadBalancerApi().get("test");
+
+
    }
 
    @AfterClass
@@ -57,28 +60,11 @@ public class HealthCheckApiLiveTest extends BaseELBApiLiveTest {
          api.getLoadBalancerApi().delete("test");
       }
    }
-   
+
+   // TODO work out the best way to create subnets to use in the test
    @Test
    protected void testConfigureHealthCheck() {
-
-      Set<HealthCheck> healthChecks = api().configureHealthCheck("test", HealthCheck.builder()
-              .healthyThreshold(2)
-              .unhealthyThreshold(2)
-              .interval(30)
-              .target("HTTP:80/ping")
-              .timeout(3)
-              .build());
-      for (HealthCheck healthCheck : healthChecks) {
-         checkHealthCheck(healthCheck);
-      }
-      
+      final Set<String> result = api().attachLoadBalancerToSubnets(loadBalancer.getName(), loadBalancer.getSubnets());
    }
 
-   private void checkHealthCheck(HealthCheck healthCheck) {
-      checkNotNull(healthCheck.getHealthyThreshold(), "Description cannot be null for InstanceState");
-      checkNotNull(healthCheck.getInterval(), "InstanceId cannot be null for InstanceState");
-      checkNotNull(healthCheck.getTarget(), "Target must not be null");
-      checkNotNull(healthCheck.getTimeout(), "State cannot be null for InstanceState");
-      checkNotNull(healthCheck.getUnhealthyThreshold(), "Description cannot be null for InstanceState");
-   }
 }
