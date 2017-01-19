@@ -18,7 +18,6 @@ package org.jclouds.elb.features;
 
 import java.util.Set;
 
-import org.jclouds.elb.domain.HealthCheck;
 import org.jclouds.elb.domain.Listener;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.domain.Protocol;
@@ -61,17 +60,11 @@ public class SubnetApiLiveTest extends BaseELBApiLiveTest {
          api.getLoadBalancerApi().delete("test");
       }
    }
-   
+
+   // TODO work out the best way to create subnets to use in the test
    @Test
    protected void testConfigureHealthCheck() {
       final Set<String> result = api().attachLoadBalancerToSubnets(loadBalancer.getName(), loadBalancer.getSubnets());
    }
 
-   private void checkHealthCheck(HealthCheck healthCheck) {
-//      checkNotNull(healthCheck.getHealthyThreshold(), "Description cannot be null for InstanceState");
-//      checkNotNull(healthCheck.getInterval(), "InstanceId cannot be null for InstanceState");
-//      checkNotNull(healthCheck.getTarget(), "Target must not be null");
-//      checkNotNull(healthCheck.getTimeout(), "State cannot be null for InstanceState");
-//      checkNotNull(healthCheck.getUnhealthyThreshold(), "Description cannot be null for InstanceState");
-   }
 }

@@ -54,7 +54,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 /**
  * Provides access to Amazon ELB via the Query API
  * <p/>
- * 
+ *
  * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference"
  *      >doc</a>
  */
@@ -62,13 +62,20 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 @VirtualHost
 public interface LoadBalancerApi {
 
-   @Named("CreateLoadBalancer")
-   @POST
-   @Path("/")
-   @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
-   @FormParams(keys = ACTION, values = "CreateLoadBalancerListeners")
-   String createLoadBalancerListeners(@FormParam("LoadBalancerName") String name,
-                                      @BinderParam(BindListenersToFormParams.class) Iterable<Listener> listeners);
+    /**
+     * Creates listeners for an existing load balancer.
+     *
+     * @param name Name of the loadBalancer to create the listeners in.
+     * @param listeners The listeners to create.
+     * @return null if load balancer is not found
+     */
+    @Named("CreateLoadBalancerListeners")
+    @POST
+    @Path("/")
+    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
+    @FormParams(keys = ACTION, values = "CreateLoadBalancerListeners")
+    String createLoadBalancerListeners(@FormParam("LoadBalancerName") String name,
+                                       @BinderParam(BindListenersToFormParams.class) Iterable<Listener> listeners);
 
    @Named("CreateLoadBalancer")
    @POST
@@ -180,7 +187,7 @@ public interface LoadBalancerApi {
    /**
     * Returns detailed configuration information for the specified LoadBalancers. If there are none,
     * the action returns an empty list.
-    * <p>
+    *
     * <br/>
     * You can paginate the results using the {@link ListLoadBalancersOptions parameter}
     *
@@ -197,20 +204,20 @@ public interface LoadBalancerApi {
 
    /**
     * Deletes the specified LoadBalancer.
-    * <p>
+    *
     * <p/>
     * If attempting to recreate the LoadBalancer, the api must reconfigure all the settings. The
     * DNS name associated with a deleted LoadBalancer will no longer be usable. Once deleted, the
     * name and associated DNS record of the LoadBalancer no longer exist and traffic sent to any of
     * its IP addresses will no longer be delivered to api instances. The api will not receive
     * the same DNS name even if a new LoadBalancer with same LoadBalancerName is created.
-    * <p>
+    *
     * <p/>
     * To successfully call this API, the api must provide the same account credentials as were
     * used to create the LoadBalancer.
-    * <p>
+    *
     * <h4>Note</h4>
-    * <p>
+    *
     * By design, if the LoadBalancer does not exist or has already been deleted, DeleteLoadBalancer
     * still succeeds.
     *

@@ -45,7 +45,13 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 @VirtualHost
 public interface SubnetApi {
 
-
+   /**
+    * Attaches a collection of subnets to the load balancer.
+    *
+    * @param loadBalancerName Name of the loadBalancer to attach the subnets to.
+    * @param subnetIds Collection of subnet IDs to attach.
+    * @return null if load balancer is not found
+    */
    @Named("AttachLoadBalancerToSubnets")
    @POST
    @Path("/")
@@ -53,8 +59,15 @@ public interface SubnetApi {
    @FormParams(keys = ACTION, values = "AttachLoadBalancerToSubnets")
    Set<String> attachLoadBalancerToSubnets(
            @FormParam("LoadBalancerName") String loadBalancerName,
-           @BinderParam(BindSubnetIdsToIndexedFormParams.class) Iterable<String> subnetNames);
+           @BinderParam(BindSubnetIdsToIndexedFormParams.class) Iterable<String> subnetIds);
 
+   /**
+    * Detaches a collection of subnets from the load balancer.
+    *
+    * @param loadBalancerName Name of the loadBalancer to detach the subnets from.
+    * @param subnetIds Collection of subnet IDs to detach.
+    * @return null if load balancer is not found
+    */
    @Named("DetachLoadBalancerFromSubnets")
    @POST
    @Path("/")
@@ -62,7 +75,7 @@ public interface SubnetApi {
    @FormParams(keys = ACTION, values = "DetachLoadBalancerFromSubnets")
    Set<String> detachLoadBalancerFromSubnets(
            @FormParam("LoadBalancerName") String loadBalancerName,
-           @BinderParam(BindSubnetIdsToIndexedFormParams.class) Iterable<String> subnetNames);
+           @BinderParam(BindSubnetIdsToIndexedFormParams.class) Iterable<String> subnetIds);
 
 
 }
